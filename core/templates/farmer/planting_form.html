@@ -1,0 +1,122 @@
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/style.css' %}">
+
+<div style="margin-bottom:15px;">
+    <a href="/">🌱 Planting</a>
+    <a href="/harvesting/">🌾 Harvesting</a>
+    <a href="/dashboard/">📊 Dashboard</a>
+</div>
+
+<div class="container">
+    <h2>🌱 Planting Form</h2>
+
+    <form method="POST">
+        {% csrf_token %}
+
+        <input type="text" name="name" placeholder="Name" required>
+        <input type="text" name="barangay" placeholder="Barangay" required>
+        <input type="number" name="area" placeholder="Area Planted" required>
+
+        <p><b>Signature:</b></p>
+
+        <!-- Button -->
+        <button type="button" onclick="openModal()">✍️ Open Signature Pad</button>
+
+        <!-- Preview -->
+        <div id="preview" style="margin-top:10px;"></div>
+
+        <input type="hidden" name="signature" id="signature">
+
+        <br>
+        <button type="button" onclick="save()">Submit</button>
+    </form>
+    <!-- FULLSCREEN MODAL -->
+    <div id="signatureModal" style="
+    display:none;
+    position:fixed;
+    top:0; left:0;
+    width:100%; height:100%;
+    background:rgba(0,0,0,0.7);
+    z-index:9999;
+    padding:40px;
+    ">
+        <div style="
+            background:white;
+            padding:20px;
+            border-radius:10px;
+            height:100%;
+        ">
+
+        <h2>Draw Your Signature</h2>
+
+        <canvas id="modal-pad" style="border:1px solid #000;"></canvas>
+
+        <br><br>
+
+        <button onclick="clearPad()">Clear</button>
+        <button onclick="saveSignature()">Save Signature</button>
+        <button onclick="closeModal()">Cancel</button>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/signature_pad"></script>
+
+<script>
+let pad = null;
+
+// Open modal
+function openModal() {
+    const modal = document.getElementById("signatureModal");
+    const canvas = document.getElementById("modal-pad");
+
+    modal.style.display = "block";
+
+    // Set proper resolution (VERY IMPORTANT)
+    canvas.width = window.innerWidth * 0.9;
+    canvas.height = window.innerHeight * 0.6;
+
+    // Initialize only once
+    if (!pad) {
+        pad = new SignaturePad(canvas);
+    } else {
+        pad.clear();
+    }
+}
+
+// Close modal
+function closeModal() {
+    document.getElementById("signatureModal").style.display = "none";
+}
+
+// Clear signature
+function clearPad() {
+    if (pad) pad.clear();
+}
+
+// Save signature
+function saveSignature() {
+    if (!pad || pad.isEmpty()) {
+        alert("Please provide a signature!");
+        return;
+    }
+
+    const data = pad.toDataURL("image/png");
+
+    document.getElementById("signature").value = data;
+
+    document.getElementById("preview").innerHTML =
+        `<img src="${data}" width="200" style="border:1px solid #ccc; border-radius:6px;"/>`;
+
+    closeModal();
+}
+
+// Submit form
+function save() {
+    if (!document.getElementById("signature").value) {
+        alert("Please add signature first!");
+        return;
+    }
+
+    document.forms[0].submit();
+}
+</script>

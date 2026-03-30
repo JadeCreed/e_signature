@@ -1,0 +1,56 @@
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/style.css' %}">
+
+<div style="margin-bottom:15px;">
+    <a href="/">🌱 Planting</a>
+    <a href="/harvesting/">🌾 Harvesting</a>
+    <a href="/dashboard/">📊 Dashboard</a>
+</div>
+
+<h2>📊 President Dashboard</h2>
+
+<!-- 🌱 PLANTING TABLE -->
+<div class="card">
+    <h3>🌱 Planting Records</h3>
+    <table>
+        <tr>
+            <th>Farmer Name</th>
+            <th>Barangay</th>
+            <th>Area Planted</th>
+            <th>Signature</th>
+        </tr>
+
+        {% for p in planting %}
+        <tr>
+            <td>{{ p.user.name }}</td>
+            <td>{{ p.barangay }}</td>
+            <td>{{ p.area_planted }}</td>
+            <td>
+                <img src="{{ p.signature }}" width="100"/>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+
+<!-- 🌾 HARVESTING SUMMARY -->
+<div class="card">
+    <h3>🌾 Harvesting Summary</h3>
+    <table>
+        <tr>
+            <th>Barangay</th>
+            <th>Area</th>
+            <th>Yield</th>
+            <th>Volume</th>
+        </tr>
+
+        {% for h in harvesting %}
+        <tr>
+            <td>{{ h.barangay }}</td>
+            <td>{{ h.total_area }}</td>
+            <td>{{ h.avg_yield }}</td>
+            <td>{{ h.total_volume }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
